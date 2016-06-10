@@ -1,15 +1,35 @@
 'use strict';
+
+// Class
+// function Query (queryWord, queryType)	{
+// 	var request = {
+// 		q: queryAlbum,
+// 		type: queryType,
+// 		limit: '50'
+// 	};
+// 	var url = "http://api.spotify.com/v1/search";
+//
+// 	$.getJSON(url, request, function(results) {
+// 		combResults(results.albums.items);
+// 		console.log(results.albums.items);
+// 		});
+// }
+// }
+
+
+
+
 // json object
-var pullArtistInfo = function(query) {
+var pullArtistInfo = function(queryWord, queryType) {
 	var request = {
-		q: query,
-		type: 'album',
+		q: queryWord,
+		type: queryType,
 		limit: '50'
 	};
 	var url = "http://api.spotify.com/v1/search";
 
 	$.getJSON(url, request, function(results) {
-		// console.log(results.albums.items);
+		console.log(results);
 		// send 'results' to be displayed
 		combResults(results.albums.items);
 		});
@@ -47,7 +67,8 @@ $(function()	{
 	$('.entry').submit(function(e) {
 		e.preventDefault();
 		$('.results').html('');
-		var queryArtist = $('input#artist').val();
-		pullArtistInfo(queryArtist);
+		var queryWord = $('input#artist').val();
+		var queryType = 'album';
+		pullArtistInfo(queryWord, queryType);
 	});
 });
