@@ -3,12 +3,13 @@
 var pullArtistInfo = function(query) {
 	var request = {
 		q: query,
-		type: 'album'
+		type: 'album',
+		limit: '10'
 	};
 	var url = "http://api.spotify.com/v1/search";
 
 	$.getJSON(url, request, function(results) {
-		console.log(results.albums.items);
+		// console.log(results.albums.items);
 		// send 'results' to be displayed
 		combResults(results.albums.items);
 		});
@@ -22,13 +23,25 @@ var combResults = function(results) {
 }
 // pull data from each iteration of comb results.
 var showResults = function(albums)	{
-	console.log(albums);
-	var albumName = albums.name;
-	var albumType = albums.type;
-	var albumImg	= albums.images[0].url;
-	var results = albumName + '<br>' + albumType + '<br>' + '<img src="' + albumImg + '" height="100" width="100"> <br>';
-	return results;
+
+	// copy .results section
+	var result = $('.template .albumData').clone();
+
+	// set albumTitle
+	var albumName = result.find('.albumTitle');
+	albumName.html('<p>' + albums.name + '</p>');
+
+	// set album img and link
+	var albumImgAnch = result.find('.albumAnchor');
+	albumImgAnch.html('<a href="' + albums.external_urls.spotify + '" target="_blank"><img src="' + albums.images[0].url + '" alt="img" height="100" width="100"></a>');
+
+	// display type
+	var albumType = result.find('.type');
+	albumType.html('<p>' + albums.album_type + '</p>');
+
+	return result;
 }
+
 // accept query
 $(function()	{
 	$('.entry').on('click', '#submit', function(e) {
