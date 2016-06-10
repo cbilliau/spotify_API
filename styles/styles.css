@@ -2,3 +2,29 @@
 .hidden	{
 	display: none;
 }
+
+.results {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.albumData	{
+	width:  200px;
+	height: 200px;
+}
+
+.albumData p {
+	text-align: center;
+	margin: 10px 0 5px 0;
+	font-family: sans-serif;
+}
+
+.albumData img {
+	margin: 0px 50px;
+}
+
+.albumType	{
+	font-size: 12px;
+	color: grey;
+}

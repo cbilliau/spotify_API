@@ -4,7 +4,7 @@ var pullArtistInfo = function(query) {
 	var request = {
 		q: query,
 		type: 'album',
-		limit: '10'
+		limit: '50'
 	};
 	var url = "http://api.spotify.com/v1/search";
 
@@ -36,7 +36,7 @@ var showResults = function(albums)	{
 	albumImgAnch.html('<a href="' + albums.external_urls.spotify + '" target="_blank"><img src="' + albums.images[0].url + '" alt="img" height="100" width="100"></a>');
 
 	// display type
-	var albumType = result.find('.type');
+	var albumType = result.find('.albumType');
 	albumType.html('<p>' + albums.album_type + '</p>');
 
 	return result;
@@ -44,8 +44,9 @@ var showResults = function(albums)	{
 
 // accept query
 $(function()	{
-	$('.entry').on('click', '#submit', function(e) {
+	$('.entry').submit(function(e) {
 		e.preventDefault();
+		$('.results').html('');
 		var queryArtist = $('input#artist').val();
 		pullArtistInfo(queryArtist);
 	});
