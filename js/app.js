@@ -1,49 +1,37 @@
 'use strict';
 
-// Class
-// function Query (queryWord, queryType)	{
-// 	var request = {
-// 		q: queryAlbum,
-// 		type: queryType,
-// 		limit: '50'
-// 	};
-// 	var url = "http://api.spotify.com/v1/search";
-//
-// 	$.getJSON(url, request, function(results) {
-// 		combResults(results.albums.items);
-// 		console.log(results.albums.items);
-// 		});
-// }
-// }
+var Data = {
+	searchHistory: [],
 
+	findByName: function(name){
+		var filteredElement = this.searchHistory.find(function(element){
+			return element.searchTerm === name;
+		});
+		return filteredElement.results;
+	}
+};
+var SpotifyApi = {};
+var View = {};
 
-
-
-// json object
-var pullArtistInfo = function(queryWord, queryType) {
+SpotifyApi.pullArtistInfo = function(query)	{
 	var request = {
-		q: queryWord,
-		type: queryType,
+		q: query,
+		type: 'album',
 		limit: '50'
 	};
 	var url = "http://api.spotify.com/v1/search";
 
-	$.getJSON(url, request, function(results) {
-		console.log(results);
-		// send 'results' to be displayed
-		combResults(results.albums.items);
-		});
-}
-// iterate through and display results
-var combResults = function(results) {
-	$.each(results, function(i, item) {
-		var albums = showResults(item);
+	return $.getJSON(url, request);
+};
+
+View.combResults = function(results) {
+	$.each(results, function(i, item)	{
+		var albums = View.showResults(item);
 		$('.results').append(albums);
 	});
-}
-// pull data from each iteration of comb results.
-var showResults = function(albums)	{
+};
 
+View.showResults = function(albums)	{
 	// copy .results section
 	var result = $('.template .albumData').clone();
 
@@ -60,15 +48,61 @@ var showResults = function(albums)	{
 	albumType.html('<p>' + albums.album_type + '</p>');
 
 	return result;
-}
+};
 
-// accept query
+View.clearDisplay = function()	{
+	$('.results').html('');
+};
+
+View.fetchUserQuery = function(){
+	return $('input#artist').val();
+};
+
+View.createHistoryHtml = function(data)	{
+	var html = "";
+	html += "<ul>";
+	data.forEach(function(item)	{
+		html += "<li id='" + item.searchTerm + "'><a href='#'>" + item.searchTerm + "</a></li>";
+	});
+	html += "</ul>";
+	return html;
+};
+
+View.renderHistory = function(data) {
+	var html = View.createHistoryHtml(data);
+	$('.searchHistory').html(html);
+};
+
+//accept query
 $(function()	{
-	$('.entry').submit(function(e) {
+	$('.entry').submit(function(e)	{
 		e.preventDefault();
-		$('.results').html('');
-		var queryWord = $('input#artist').val();
-		var queryType = 'album';
-		pullArtistInfo(queryWord, queryType);
+		View.clearDisplay();
+		var query = View.fetchUserQuery();
+
+		SpotifyApi
+							.pullArtistInfo(query)
+							.then(function(results)	{
+								var validData = results.albums.items;
+
+								Data.searchHistory.push({
+									searchTerm: query,
+									results: validData
+								});
+
+								View.combResults(validData);
+								View.renderHistory(Data.searchHistory);
+							});
+	});
+
+	$('.searchHistory').on('click', 'a', function(e)	{
+		e.preventDefault();
+
+		var query = $(this).parent('li').attr('id');
+		var listOfAlbums = Data.findByName(query);
+
+		View.clearDisplay();
+		View.combResults(listOfAlbums);
+
 	});
 });
