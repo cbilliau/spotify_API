@@ -7,23 +7,28 @@
 </head>
 <body>
 	<div class="title">
-		<h2>Display albums by artist or keywords</h2>
+		<h2>Search Spotify by keyword and type</h2>
 	</div>
 
 <!-- Form entry -->
 	<form class="entry">
 		<input type="text" id="artist" placeholder="Artist or Keyword">
+		<select name="Choose" id="type">
+			<option value="artist">artist</option>
+			<option value="album">album</option>
+			<option value="playlist">playlist</option>
+		</select>
 		<button type="submit">Enter</button>
 	</form>
 
 <!-- Hidden template -->
 	<section class="template hidden">
-		<div class="albumData">
-			<p class="albumTitle"></p>
-			<a href="" class="albumAnchor">
+		<div class="data">
+			<p class="name"></p>
+			<a href="" class="anchor">
 				<img src="" alt="" class="albumIMg">
 			</a>
-			<p class="albumType"></p>
+			<p class="type"></p>
 		</div>
 	</section>
 

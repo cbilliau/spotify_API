@@ -13,12 +13,13 @@ var Data = {
 var SpotifyApi = {};
 var View = {};
 
-SpotifyApi.pullArtistInfo = function(query)	{
+SpotifyApi.pullArtistInfo = function(query, singleType)	{
 	var request = {
 		q: query,
-		type: 'album',
+		type: singleType,
 		limit: '50'
 	};
+	console.log(singleType);
 	var url = "http://api.spotify.com/v1/search";
 
 	return $.getJSON(url, request);
@@ -26,26 +27,26 @@ SpotifyApi.pullArtistInfo = function(query)	{
 
 View.combResults = function(results) {
 	$.each(results, function(i, item)	{
-		var albums = View.showResults(item);
-		$('.results').append(albums);
+		var info = View.showResults(item);
+		$('.results').append(info);
 	});
 };
 
-View.showResults = function(albums)	{
+View.showResults = function(data)	{
 	// copy .results section
-	var result = $('.template .albumData').clone();
+	var result = $('.template .data').clone();
 
 	// set albumTitle
-	var albumName = result.find('.albumTitle');
-	albumName.html('<p>' + albums.name + '</p>');
+	var nameTitle = result.find('.name');
+	nameTitle.html('<p>' + data.name + '</p>');
 
 	// set album img and link
-	var albumImgAnch = result.find('.albumAnchor');
-	albumImgAnch.html('<a href="' + albums.external_urls.spotify + '" target="_blank"><img src="' + albums.images[0].url + '" alt="img" height="100" width="100"></a>');
+	var imgAnch = result.find('.anchor');
+	imgAnch.html('<a href="' + data.external_urls.spotify + '" target="_blank"><img src="' + data.images[0].url + '" alt="img" height="100" width="100"></a>');
 
 	// display type
-	var albumType = result.find('.albumType');
-	albumType.html('<p>' + albums.album_type + '</p>');
+	var type = result.find('.type');
+	type.html('<p>' + data.type + '</p>');
 
 	return result;
 };
@@ -58,11 +59,15 @@ View.fetchUserQuery = function(){
 	return $('input#artist').val();
 };
 
+View.fetchUserType = function(){
+	return $('select#type').val();
+};
+
 View.createHistoryHtml = function(data)	{
 	var html = "";
 	html += "<ul>";
 	data.forEach(function(item)	{
-		html += "<li id='" + item.searchTerm + "'><a href='#'>" + item.searchTerm + "</a></li>";
+		html += "<li id='" + item.searchTerm + "'><a href='#'>" + item.searchTerm + "</a> - " + item.searchType + "</li>";
 	});
 	html += "</ul>";
 	return html;
@@ -79,14 +84,22 @@ $(function()	{
 		e.preventDefault();
 		View.clearDisplay();
 		var query = View.fetchUserQuery();
+		var singleType = View.fetchUserType();
 
 		SpotifyApi
-							.pullArtistInfo(query)
+							.pullArtistInfo(query, singleType)
 							.then(function(results)	{
-								var validData = results.albums.items;
-
+								console.log(results);
+								if (results.albums) {
+									var validData = results.albums.items;
+								} else if (results.artists) {
+									var validData = results.artists.items;
+								} else {
+									var validData = results.playlists.items;
+								};
 								Data.searchHistory.push({
 									searchTerm: query,
+									searchType: singleType,
 									results: validData
 								});
 

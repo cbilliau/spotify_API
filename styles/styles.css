@@ -15,22 +15,22 @@ body {
 	flex-wrap: wrap;
 }
 
-.albumData	{
+.data	{
 	width:  200px;
 	height: 200px;
 }
 
-.albumData p {
+.data p {
 	text-align: center;
 	margin: 10px 0 5px 0;
 	font-family: sans-serif;
 }
 
-.albumData img {
+.data img {
 	margin: 0px 50px;
 }
 
-.albumType	{
+.type	{
 	font-size: 12px;
 	color: grey;
 }
